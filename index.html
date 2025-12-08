@@ -10,7 +10,7 @@ body{min-height:100vh;background:#050507;color:#dbe2ff;font-family:Arial, sans-s
 .container{width:100%;max-width:980px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);box-shadow:0 30px 80px rgba(2,4,6,0.8);padding:28px;border-radius:6px;}
 textarea{width:100%;background:#0f0f12;color:#dbe2ff;border:1px solid rgba(255,255,255,0.03);padding:12px;min-height:160px;}
 .output{background:rgba(0,0,0,0.3);padding:12px;min-height:120px;word-break:break-all;}
-.btn{padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;cursor:pointer;}
+.btn{padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;cursor:pointer;margin-right: 5px; margin-top: 5px;}
 </style>
 </head>
 <body>
@@ -18,10 +18,16 @@ textarea{width:100%;background:#0f0f12;color:#dbe2ff;border:1px solid rgba(255,2
 <h1>Discord automod bypasser</h1>
 <p>URL Encoder — Encodes the text so it bypasses</p>
 <textarea id="input"></textarea>
-<button class="btn" onclick="encode()">Encode</button>
-<button class="btn" onclick="clearInput()">Clear</button>
+<div style="margin-top: 10px; margin-bottom: 10px;">
+    <button class="btn" onclick="encode()">Encode</button>
+    <button class="btn" onclick="clearInput()">Clear</button>
+</div>
 <div id="output" class="output"></div>
-<button class="btn" onclick="copyOut()">Copy (DONT COPY IT MANUALLY)</button>
+<div style="margin-top: 10px;">
+    <button class="btn" onclick="copyOut()">Copy (Standard)</button>
+    <button class="btn" onclick="copySpoiler()">Copy with Hidden Link</button>
+</div>
+
 <script>
 function encodeTextPreserveSlash(text){
  const enc = new TextEncoder();
@@ -33,12 +39,40 @@ function encodeTextPreserveSlash(text){
  }
  return out;
 }
+
 function encode(){
  const i=document.getElementById('input').value;
  document.getElementById('output').innerText=encodeTextPreserveSlash(i);
 }
-function clearInput(){document.getElementById('input').value='';document.getElementById('output').innerText='';}
-function copyOut(){const out=document.getElementById('output').innerText;if(!out)return;navigator.clipboard.writeText('https://'+out);} 
+
+function clearInput(){
+    document.getElementById('input').value='';
+    document.getElementById('output').innerText='';
+}
+
+function copyOut(){
+    const out=document.getElementById('output').innerText;
+    if(!out)return;
+    navigator.clipboard.writeText('https://'+out);
+} 
+
+function copySpoiler(){
+    const inputVal = document.getElementById('input').value;
+    const encodedVal = document.getElementById('output').innerText;
+    
+    if(!inputVal || !encodedVal) return;
+
+    // Insert word joiner (U+2060) between every letter of input
+    const spacedInput = inputVal.split('').join('\u2060');
+
+    // The spoiler block
+    const spoiler = "||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||";
+
+    // Combine: SpacedInput + Space + Spoiler + https:// + Encoded
+    const finalString = spacedInput + " " + spoiler + "https://" + encodedVal;
+
+    navigator.clipboard.writeText(finalString);
+}
 </script>
 </div>
 </body>
