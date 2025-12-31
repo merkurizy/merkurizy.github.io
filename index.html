@@ -1,79 +1,426 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Discord auto-mod bypasser</title>
-<style>
-/* bypasser ig idk */
-body{min-height:100vh;background:#050507;color:#dbe2ff;font-family:Arial, sans-serif;display:flex;align-items:center;justify-content:center;padding:24px;}
-.container{width:100%;max-width:980px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);box-shadow:0 30px 80px rgba(2,4,6,0.8);padding:28px;border-radius:6px;}
-textarea{width:100%;background:#0f0f12;color:#dbe2ff;border:1px solid rgba(255,255,255,0.03);padding:12px;min-height:160px;}
-.output{background:rgba(0,0,0,0.3);padding:12px;min-height:120px;word-break:break-all;}
-.btn{padding:10px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;cursor:pointer;margin-right: 5px; margin-top: 5px;}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>March | Render & Animation Studio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Unbounded:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --acid-green: #bfff00;
+            --hot-pink: #ff00ff;
+            --electric-blue: #00f0ff;
+            --card-bg: #171717;
+            --bg-color: #000000;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: #fff;
+            font-family: 'Unbounded', sans-serif;
+            overflow-x: hidden;
+            cursor: none; /* Varsayılan imleci gizle */
+        }
+
+        /* Tüm etkileşimli elemanlarda varsayılan imleci kapat */
+        a, button, .card {
+            cursor: none !important;
+        }
+
+        .syne-font { font-family: 'Syne', sans-serif; }
+
+        .blob {
+            position: fixed;
+            z-index: -1;
+            filter: blur(120px);
+            opacity: 0.15;
+            animation: move 25s infinite alternate;
+        }
+
+        @keyframes move {
+            from { transform: translate(-5%, -5%) scale(1); }
+            to { transform: translate(10%, 10%) scale(1.3); }
+        }
+
+        /* --- Magical Grid Effect --- */
+        #cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            width: 100%;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.1); 
+            border-radius: 10px;
+            position: relative;
+            height: 260px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .card::before {
+            content: "";
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: inherit;
+            background: radial-gradient(
+                300px circle at var(--mouse-x) var(--mouse-y), 
+                rgba(255, 255, 255, 0.4), 
+                transparent 40%
+            );
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+
+        #cards:hover .card::before {
+            opacity: 1;
+        }
+
+        .card-content {
+            background-color: var(--card-bg);
+            border-radius: inherit;
+            position: absolute;
+            inset: 1px;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .card-content::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(
+                150px circle at var(--mouse-x) var(--mouse-y), 
+                rgba(255, 255, 255, 0.15), 
+                transparent 40%
+            );
+            border-radius: inherit;
+            z-index: 5;
+            opacity: 0;
+            transition: opacity 0.5s;
+            pointer-events: none;
+        }
+
+        .card:hover .card-content::after {
+            opacity: 1;
+        }
+
+        /* Media Layers Logic */
+        .card-media-static, .card-media-gif {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.4s ease;
+        }
+
+        .card-media-static {
+            z-index: 1;
+            opacity: 0.25; 
+            filter: grayscale(100%);
+        }
+
+        .card-media-gif {
+            z-index: 2;
+            opacity: 0; 
+        }
+
+        .card:hover .card-media-static {
+            opacity: 0;
+        }
+
+        .card:hover .card-media-gif {
+            opacity: 1;
+        }
+
+        .card-icon {
+            position: relative;
+            z-index: 6;
+            color: rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .card:hover .card-icon {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        .card-icon svg {
+            width: 48px;
+            height: 48px;
+        }
+
+        /* --- UI Elements --- */
+        .marquee {
+            white-space: nowrap;
+            overflow: hidden;
+            background: #fff;
+            color: #000;
+            padding: 12px 0;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .marquee-content {
+            display: inline-block;
+            animation: marquee 30s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .cursor-blob {
+            width: 20px;
+            height: 20px;
+            background: #fff;
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: difference;
+            /* Önemli: İmleci tam merkeze hizala */
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease, background-color 0.2s ease;
+        }
+
+        .price-badge {
+            background: #fff;
+            color: #000;
+            padding: 4px 12px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .neo-card {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid #fff;
+            box-shadow: 8px 8px 0px #fff;
+            transition: all 0.2s;
+        }
+
+        .neo-card:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 14px 14px 0px var(--hot-pink);
+            border-color: var(--hot-pink);
+        }
+
+        @media (max-width: 900px) {
+            #cards { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            #cards { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
-<body>
-<div class="container">
-<h1>Discord automod bypasser</h1>
-<p>URL Encoder — Encodes the text so it bypasses</p>
-<textarea id="input"></textarea>
-<div style="margin-top: 10px; margin-bottom: 10px;">
-    <button class="btn" onclick="encode()">Encode</button>
-    <button class="btn" onclick="clearInput()">Clear</button>
-</div>
-<div id="output" class="output"></div>
-<div style="margin-top: 10px;">
-    <button class="btn" onclick="copyOut()">Copy (Standard)</button>
-    <button class="btn" onclick="copySpoiler()">Copy with Hidden Link</button>
-</div>
+<body class="selection:bg-white selection:text-black">
 
-<script>
-function encodeTextPreserveSlash(text){
- const enc = new TextEncoder();
- let out="";
- for(const ch of text){
-  if(ch=="/"){out+="/";continue;}
-  const bytes=enc.encode(ch);
-  for(const b of bytes) out+="%"+b.toString(16).padStart(2,'0');
- }
- return out;
-}
+    <div class="cursor-blob" id="cursor"></div>
 
-function encode(){
- const i=document.getElementById('input').value;
- document.getElementById('output').innerText=encodeTextPreserveSlash(i);
-}
+    <div class="blob w-[600px] h-[600px] bg-purple-600 top-[-10%] left-[-10%]"></div>
+    <div class="blob w-[500px] h-[500px] bg-blue-600 bottom-[0%] right-[0%]" style="animation-delay: -90s;"></div>
 
-function clearInput(){
-    document.getElementById('input').value='';
-    document.getElementById('output').innerText='';
-}
+    <div class="marquee border-b-4 border-white">
+        <div class="marquee-content">
+            ✦ MARCH VISUALS ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ ✦ MARCH VISUALS ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ ✦ MARCH VISUALS ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦✦ MARCH VISUALS ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ ✦ MARCH VISUALS ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ ✦ MARCH VISUALS ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ ✦ MARCH VISUALS ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦
+        </div>
+    </div>
 
-function copyOut(){
-    const out=document.getElementById('output').innerText;
-    if(!out)return;
-    navigator.clipboard.writeText('https://'+out);
-} 
+    <main class="max-w-6xl mx-auto px-6 py-16">
+        
+        <section class="mb-24 text-center">
+            <div class="inline-block p-6 bg-transparent border-4 border-white mb-6 -rotate-1">
+                <h1 class="syne-font text-6xl md:text-9xl uppercase leading-none text-white">MARCH</h1>
+                <div class="bg-white text-black text-2xl md:text-4xl py-1 px-4 mt-2 font-bold tracking-tighter">RENDER HOUSE</div>
+            </div>
+            <p class="text-lg md:text-xl font-bold mt-4 opacity-50 italic tracking-widest text-white">
+                "Bi' numarayım ve öyle kalıca'm"
+            </p>
+        </section>
 
-function copySpoiler(){
-    const inputVal = document.getElementById('input').value;
-    const encodedVal = document.getElementById('output').innerText;
-    
-    if(!inputVal || !encodedVal) return;
+        <!-- Fiyatlar -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-32">
+            <div class="neo-card p-10">
+                <div class="text-xs font-bold mb-2 opacity-50 uppercase tracking-widest">Type: 01</div>
+                <h2 class="syne-font text-4xl mb-6 text-white uppercase">Renderlar</h2>
+                <div class="space-y-4 mb-10">
+                    <div class="flex justify-between items-center border-b border-white/20 pb-3">
+                        <span class="font-bold text-white">Düz Render</span>
+                        <span class="price-badge">250</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-white/20 pb-3">
+                        <span class="font-bold text-white">Detaylı Render</span>
+                        <span class="price-badge">300</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-white/20 pb-3">
+                        <span class="font-bold text-white">Özel Render (Modeller vb.)</span>
+                        <span class="price-badge">450</span>
+                    </div>
+                </div>
+                <button class="w-full py-4 bg-white text-black font-bold text-lg hover:bg-hot-pink hover:text-white transition-all">SİPARİŞ VER</button>
+            </div>
 
-    // Insert word joiner (U+2060) between every letter of input
-    const spacedInput = inputVal.split('').join('\u2060');
+            <div class="neo-card p-10">
+                <div class="text-xs font-bold mb-2 opacity-50 uppercase tracking-widest">Type: 02</div>
+                <h2 class="syne-font text-4xl mb-6 text-white uppercase">Animasyonlar</h2>
+                <div class="space-y-4 mb-10">
+                    <div class="flex justify-between items-center border-b border-white/20 pb-3">
+                        <span class="font-bold text-white">Kısa Klip (10s)</span>
+                        <span class="price-badge">400</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-white/20 pb-3">
+                        <span class="font-bold text-white">Orta Animasyon (15-20s)</span>
+                        <span class="price-badge">550</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b border-white/20 pb-3">
+                        <span class="font-bold text-white">Sinematik Sahne (20-40s)</span>
+                        <span class="price-badge">700</span>
+                    </div>
+                </div>
+                <button class="w-full py-4 border-2 border-white font-bold text-lg hover:bg-white hover:text-black transition-all">TEKLİF AL</button>
+            </div>
+        </div>
 
-    // The spoiler block
-    const spoiler = "||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||||​||";
+        <!-- FRAGMANLAR SECTION -->
+        <section class="mb-32">
+            <div class="flex items-center gap-4 mb-12">
+                <h2 class="syne-font text-4xl md:text-5xl uppercase text-white">FRAGMANLAR</h2>
+                <div class="h-[2px] bg-white opacity-20 flex-grow"></div>
+            </div>
+            
+            <div id="cards">
+                <!-- Fragman 1 -->
+                <a href="#" target="_blank" class="card">
+                    <div class="card-content">
+                        <img class="card-media-static" src="SABIT_RESIM_LINKI" alt="Static">
+                        <img class="card-media-gif" src="GIF_LINKI" alt="Animated">
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                        </div>
+                    </div>
+                </a>
+                
+                <!-- Fragman 2 -->
+                <a href="#" target="_blank" class="card">
+                    <div class="card-content">
+                        <img class="card-media-static" src="https://i.ibb.co/4ZQ9JzkQ/image.png" alt="Static">
+                        <img class="card-media-gif" src="https://images-ext-1.discordapp.net/external/Mt8gcYaMpmKAKkYOe-j_FCTfi8NqL6dhGwfFgdcrfec/https/media.tenor.com/4N4IjHnN_ckAAAPo/tik-tok-egirl.mp4" alt="Animated">
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="#" target="_blank" class="card">
+                    <div class="card-content">
+                        <img class="card-media-static" src="SABIT_RESIM_LINKI" alt="Static">
+                        <img class="card-media-gif" src="GIF_LINKI" alt="Animated">
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                        </div>
+                    </div>
+                </a>
 
-    // Combine: SpacedInput + Space + Spoiler + https:// + Encoded
-    const finalString = spacedInput + " " + spoiler + "https://" + encodedVal;
+                <a href="#" target="_blank" class="card">
+                    <div class="card-content">
+                        <img class="card-media-static" src="SABIT_RESIM_LINKI" alt="Static">
+                        <img class="card-media-gif" src="GIF_LINKI" alt="Animated">
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        </div>
+                    </div>
+                </a>
 
-    navigator.clipboard.writeText(finalString);
-}
-</script>
-</div>
+                <a href="#" target="_blank" class="card">
+                    <div class="card-content">
+                        <img class="card-media-static" src="SABIT_RESIM_LINKI" alt="Static">
+                        <img class="card-media-gif" src="GIF_LINKI" alt="Animated">
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.74 5.88-5.74 5.88-5.74-5.88z"></path><path d="M2 12l5.74 5.88L2 23.76"></path><path d="M22 12l-5.74 5.88 5.74 5.88"></path></svg>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="#" target="_blank" class="card">
+                    <div class="card-content">
+                        <img class="card-media-static" src="SABIT_RESIM_LINKI" alt="Static">
+                        <img class="card-media-gif" src="GIF_LINKI" alt="Animated">
+                        <div class="card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><line x1="9" y1="1" x2="9" y2="4"></line><line x1="15" y1="1" x2="15" y2="4"></line><line x1="9" y1="20" x2="9" y2="23"></line><line x1="15" y1="20" x2="15" y2="23"></line><line x1="20" y1="9" x2="23" y2="9"></line><line x1="20" y1="14" x2="23" y2="14"></line><line x1="1" y1="9" x2="4" y2="9"></line><line x1="1" y1="14" x2="4" y2="14"></line></svg>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <footer class="text-center">
+            <div class="h-[1px] bg-white opacity-10 w-full mb-12"></div>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-10">
+                <div class="text-left">
+                    <h3 class="syne-font text-3xl mb-2 text-white uppercase">Projenı Başlat</h3>
+                    <p class="opacity-40 text-sm text-white">Hayallerindeki görseli March Studio ile canlandır.</p>
+                </div>
+                <div class="flex gap-4">
+                    <a href="https://discord.com" target="_blank" class="px-12 py-5 font-bold bg-white text-black hover:bg-hot-pink hover:text-white transition-all text-xl rounded-none text-decoration-none">
+                        DISCORD: marchlmao
+                    </a>
+                </div>
+            </div>
+        </footer>
+
+    </main>
+
+    <script>
+        const cursor = document.getElementById('cursor');
+        
+        // Fare hareketini dinle ve elemanın konumunu güncelle
+        document.addEventListener('mousemove', e => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        const cardsContainer = document.getElementById("cards");
+        const cards = Array.from(document.querySelectorAll(".card"));
+
+        cardsContainer.onmousemove = e => {
+            for (const card of cards) {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                card.style.setProperty("--mouse-x", `${x}px`);
+                card.style.setProperty("--mouse-y", `${y}px`);
+            }
+        };
+
+        // Etkileşim sırasında ölçeklemeyi merkeze göre yap
+        document.querySelectorAll('button, a, .card').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                // transform: translate(-50%, -50%) ifadesini koruyarak scale ekliyoruz
+                cursor.style.transform = 'translate(-50%, -50%) scale(3)';
+                cursor.style.backgroundColor = 'var(--hot-pink)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+                cursor.style.backgroundColor = '#fff';
+            });
+        });
+    </script>
 </body>
 </html>
