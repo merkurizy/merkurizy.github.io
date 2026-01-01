@@ -20,10 +20,9 @@
             color: #fff;
             font-family: 'Unbounded', sans-serif;
             overflow-x: hidden;
-            cursor: none; /* Varsayılan imleci gizle */
+            cursor: none; 
         }
 
-        /* Tüm etkileşimli elemanlarda varsayılan imleci kapat */
         a, button, .card {
             cursor: none !important;
         }
@@ -118,7 +117,6 @@
             opacity: 1;
         }
 
-        /* Media Layers Logic */
         .card-media-static, .card-media-gif {
             position: absolute;
             inset: 0;
@@ -178,12 +176,12 @@
 
         .marquee-content {
             display: inline-block;
-            animation: marquee 30s linear infinite;
+            animation: marquee 40s linear infinite; /* Hızı biraz daha yumuşattım */
         }
 
         @keyframes marquee {
             0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+            100% { transform: translateX(-50%); } /* İçerik iki katı olduğu için -50% tam tur döner */
         }
 
         .cursor-blob {
@@ -195,7 +193,6 @@
             pointer-events: none;
             z-index: 10000;
             mix-blend-mode: difference;
-            /* Önemli: İmleci tam merkeze hizala */
             transform: translate(-50%, -50%);
             transition: transform 0.1s ease, background-color 0.2s ease;
         }
@@ -234,11 +231,13 @@
     <div class="cursor-blob" id="cursor"></div>
 
     <div class="blob w-[600px] h-[600px] bg-purple-600 top-[-10%] left-[-10%]"></div>
-    <div class="blob w-[500px] h-[500px] bg-blue-600 bottom-[0%] right-[0%]" style="animation-delay: -90s;"></div>
+    <div class="blob w-[500px] h-[500px] bg-blue-600 bottom-[0%] right-[0%]" style="animation-delay: -7s;"></div>
 
     <div class="marquee border-b-4 border-white">
+        <!-- Sonsuz döngü için metni kopyaladım -->
         <div class="marquee-content">
-            ✦ MARCH VISUALS ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ ✦ MARCH VISUALS ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ ✦ MARCH VISUALS ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦✦ MARCH VISUALS ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ ✦ MARCH VISUALS ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ ✦ MARCH VISUALS ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ ✦ MARCH VISUALS ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦
+            ✦ MARCH VISUALS ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦
+            ✦ MARCH VISUALS ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦ RENDER ✦ ANIMATION ✦
         </div>
     </div>
 
@@ -273,7 +272,8 @@
                         <span class="price-badge">450</span>
                     </div>
                 </div>
-                <button class="w-full py-4 bg-white text-black font-bold text-lg hover:bg-hot-pink hover:text-white transition-all">SİPARİŞ VER</button>
+                <!-- Artık bu da alt kısma kaydırıyor -->
+                <button onclick="scrollToContact()" class="w-full py-4 bg-white text-black font-bold text-lg hover:bg-hot-pink hover:text-white transition-all uppercase">Sipariş Ver</button>
             </div>
 
             <div class="neo-card p-10">
@@ -293,7 +293,7 @@
                         <span class="price-badge">700</span>
                     </div>
                 </div>
-                <button class="w-full py-4 border-2 border-white font-bold text-lg hover:bg-white hover:text-black transition-all">TEKLİF AL</button>
+                <button onclick="scrollToContact()" class="w-full py-4 border-2 border-white font-bold text-lg hover:bg-white hover:text-black transition-all uppercase">Teklif Al</button>
             </div>
         </div>
 
@@ -305,7 +305,6 @@
             </div>
             
             <div id="cards">
-                <!-- Fragman 1 -->
                 <a href="#" target="_blank" class="card">
                     <div class="card-content">
                         <img class="card-media-static" src="SABIT_RESIM_LINKI" alt="Static">
@@ -316,11 +315,10 @@
                     </div>
                 </a>
                 
-                <!-- Fragman 2 -->
                 <a href="#" target="_blank" class="card">
                     <div class="card-content">
-                        <img class="card-media-static" src="https://i.ibb.co/4ZQ9JzkQ/image.png" alt="Static">
-                        <img class="card-media-gif" src="https://images-ext-1.discordapp.net/external/Mt8gcYaMpmKAKkYOe-j_FCTfi8NqL6dhGwfFgdcrfec/https/media.tenor.com/4N4IjHnN_ckAAAPo/tik-tok-egirl.mp4" alt="Animated">
+                        <img class="card-media-static" src="SABIT_RESIM_LINKI" alt="Static">
+                        <img class="card-media-gif" src="GIF_LINKI" alt="Animated">
                         <div class="card-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
                         </div>
@@ -369,7 +367,7 @@
             </div>
         </section>
 
-        <footer class="text-center">
+        <footer id="contact-section" class="text-center">
             <div class="h-[1px] bg-white opacity-10 w-full mb-12"></div>
             <div class="flex flex-col md:flex-row justify-between items-center gap-10">
                 <div class="text-left">
@@ -377,7 +375,8 @@
                     <p class="opacity-40 text-sm text-white">Hayallerindeki görseli March Studio ile canlandır.</p>
                 </div>
                 <div class="flex gap-4">
-                    <a href="https://discord.com" target="_blank" class="px-12 py-5 font-bold bg-white text-black hover:bg-hot-pink hover:text-white transition-all text-xl rounded-none text-decoration-none">
+                    <!-- Bağlantı senin Discord davet linkinle güncellendi -->
+                    <a href="https://discord.gg/4KcRgTCe" target="_blank" class="px-12 py-5 font-bold bg-white text-black hover:bg-hot-pink hover:text-white transition-all text-xl rounded-none text-decoration-none">
                         DISCORD: marchlmao
                     </a>
                 </div>
@@ -389,7 +388,6 @@
     <script>
         const cursor = document.getElementById('cursor');
         
-        // Fare hareketini dinle ve elemanın konumunu güncelle
         document.addEventListener('mousemove', e => {
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
@@ -409,10 +407,15 @@
             }
         };
 
-        // Etkileşim sırasında ölçeklemeyi merkeze göre yap
+        // Teklif Al & Sipariş Ver (Smooth Scroll)
+        function scrollToContact() {
+            document.getElementById('contact-section').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+
         document.querySelectorAll('button, a, .card').forEach(el => {
             el.addEventListener('mouseenter', () => {
-                // transform: translate(-50%, -50%) ifadesini koruyarak scale ekliyoruz
                 cursor.style.transform = 'translate(-50%, -50%) scale(3)';
                 cursor.style.backgroundColor = 'var(--hot-pink)';
             });
